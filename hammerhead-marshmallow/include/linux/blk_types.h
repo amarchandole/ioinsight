@@ -39,7 +39,10 @@ struct bio {
 	unsigned long		bi_rw;		/* bottom bits READ/WRITE,
 						 * top bits priority
 						 */
-
+#ifdef CONFIG_IOINSIGHT
+	pid_t			bi_pid;		// to find the process that issued this particular bio request
+	
+#endif
 	unsigned short		bi_vcnt;	/* how many bio_vec's */
 	unsigned short		bi_idx;		/* current index into bvl_vec */
 

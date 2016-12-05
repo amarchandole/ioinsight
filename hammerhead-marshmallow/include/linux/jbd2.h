@@ -452,6 +452,10 @@ struct transaction_s
 	/* Pointer to the journal for this transaction. [no locking] */
 	journal_t		*t_journal;
 
+#ifdef CONFIG_IOINSIGHT	 
+	struct 	address_space 	*t_fs_mapping;		//transaction fs mapping (using struct address_space)
+#endif
+
 	/* Sequence number for this transaction [no locking] */
 	tid_t			t_tid;
 
@@ -709,6 +713,10 @@ struct journal_s
 {
 	/* General journaling state flags [j_state_lock] */
 	unsigned long		j_flags;
+
+#ifdef CONFIG_IOINSIGHT
+	struct address_space 	*j_fs_mapping; // journal fs mapping
+#endif
 
 	/*
 	 * Is there an outstanding uncleared error on the journal (from a prior
@@ -1171,8 +1179,15 @@ extern void	jbd2_clear_buffer_revoked_flags(journal_t *journal);
  */
 
 int __jbd2_log_space_left(journal_t *); /* Called with journal locked */
+
+#ifdef CONFIG_IOINSIGHT			//add address_space to the commit function
+int jbd2_log_start_commit(journal_t *journal, tid_t tid, struct address_space *mapping );
+int __jbd2_log_start_commit(journal_t *journal, tid_t tid, struct address_space *mapping );
+#else
 int jbd2_log_start_commit(journal_t *journal, tid_t tid);
 int __jbd2_log_start_commit(journal_t *journal, tid_t tid);
+#endif
+
 int jbd2_journal_start_commit(journal_t *journal, tid_t *tid);
 int jbd2_journal_force_commit_nested(journal_t *journal);
 int jbd2_log_wait_commit(journal_t *journal, tid_t tid);

@@ -644,6 +644,14 @@ int pagecache_write_end(struct file *, struct address_space *mapping,
 				struct page *page, void *fsdata);
 
 struct backing_dev_info;
+
+#ifdef CONFIG_IOINSIGHT
+	#define AS_FS_NONE 0x000   //address_space, fsync no!
+	#define AS_FS_FSYNC 0x001  //address_space, fsync(), fsync option
+	#define AS_FS_FDSYNC 0x002 //address_space, fsync(), fdatasync option
+	#define AS_FS_SQLITE 0x004 //address_space, fsync() from sqlite
+#endif
+
 struct address_space {
 	struct inode		*host;		/* owner: inode, block_device */
 	struct radix_tree_root	page_tree;	/* radix tree of all pages */
@@ -655,6 +663,13 @@ struct address_space {
 	/* Protected by tree_lock together with the radix tree */
 	unsigned long		nrpages;	/* number of total pages */
 	pgoff_t			writeback_index;/* writeback starts here */
+
+#ifdef CONFIG_IOINSIGHT 
+	int 				fs_flags;	/* fsync(), fsync/fdatasync/sqlite */
+	unsigned char		fs_id;	
+	unsigned int 		t_tid;
+#endif
+
 	const struct address_space_operations *a_ops;	/* methods */
 	unsigned long		flags;		/* error bits/gfp mask */
 	struct backing_dev_info *backing_dev_info; /* device readahead, etc */
@@ -796,6 +811,7 @@ struct inode {
 	struct timespec		i_atime;
 	struct timespec		i_mtime;
 	struct timespec		i_ctime;
+
 	spinlock_t		i_lock;	/* i_blocks, i_bytes, maybe i_size */
 	unsigned short          i_bytes;
 	blkcnt_t		i_blocks;
