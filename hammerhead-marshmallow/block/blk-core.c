@@ -37,6 +37,10 @@
 
 #include "blk.h"
 
+#ifdef CONFIG_IOINSIGHT
+#include "../ioinsight/ioinsight.h"
+#endif
+
 EXPORT_TRACEPOINT_SYMBOL_GPL(block_bio_remap);
 EXPORT_TRACEPOINT_SYMBOL_GPL(block_rq_remap);
 EXPORT_TRACEPOINT_SYMBOL_GPL(block_bio_complete);
@@ -1815,6 +1819,13 @@ void submit_bio(int rw, struct bio *bio)
 				bdevname(bio->bi_bdev, b),
 				count);
 		}
+
+#ifdef CONFIG_IOINSIGHT 
+		 if (bio && bio->bi_io_vec && bio->bi_io_vec->bv_page
+                   && bio->bi_io_vec->bv_page->mapping) 
+			bio->bi_pid = task_pid_nr(current);
+#endif
+		
 	}
 
 	generic_make_request(bio);
@@ -2060,6 +2071,11 @@ struct request *blk_peek_request(struct request_queue *q)
 			rq->cmd_flags |= REQ_STARTED;
 			if (rq->cmd_flags & REQ_URGENT)
 				q->dispatched_urgent = true;
+
+#ifdef CONFIG_IOINSIGHT
+			ioinsight_add_io(rq, 1); 	//io request issued
+#endif
+
 			trace_block_rq_issue(q, rq);
 		}
 
@@ -2228,6 +2244,11 @@ bool blk_update_request(struct request *req, int error, unsigned int nr_bytes)
 
 	if (!req->bio)
 		return false;
+	
+#ifdef CONFIG_IOINSIGHT
+	if ( blk_rq_bytes(req) / 512 != 0 )
+		ioinsight_add_io(req, 0);				//io request completed
+#endif	
 
 	trace_block_rq_complete(req->q, req);
 

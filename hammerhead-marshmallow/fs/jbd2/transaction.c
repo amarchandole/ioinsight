@@ -84,6 +84,9 @@ jbd2_get_transaction(journal_t *journal, transaction_t *transaction)
 	transaction->t_state = T_RUNNING;
 	transaction->t_start_time = ktime_get();
 	transaction->t_tid = journal->j_transaction_sequence++;
+#ifdef CONFIG_IOINSIGHT
+	transaction->t_fs_mapping = NULL;
+#endif
 	transaction->t_expires = jiffies + journal->j_commit_interval;
 	spin_lock_init(&transaction->t_handle_lock);
 	atomic_set(&transaction->t_updates, 0);
@@ -97,6 +100,7 @@ jbd2_get_transaction(journal_t *journal, transaction_t *transaction)
 	add_timer(&journal->j_commit_timer);
 
 	J_ASSERT(journal->j_running_transaction == NULL);
+	
 	journal->j_running_transaction = transaction;
 	transaction->t_max_wait = 0;
 	transaction->t_start = jiffies;
@@ -150,15 +154,8 @@ static int start_this_handle(journal_t *journal, handle_t *handle,
 	transaction_t	*transaction, *new_transaction = NULL;
 	tid_t		tid;
 	int		needed, need_to_start;
-	int		nblocks = handle->h_buffer_credits;
+	int		nblocks = handle->h_buffer_credits; //allowed to dirty (ryoung)
 	unsigned long ts = jiffies;
-
-	if (nblocks > journal->j_max_transaction_buffers) {
-		printk(KERN_ERR "JBD2: %s wants too many credits (%d > %d)\n",
-		       current->comm, nblocks,
-		       journal->j_max_transaction_buffers);
-		return -ENOSPC;
-	}
 
 alloc_transaction:
 	if (!journal->j_running_transaction) {
@@ -241,9 +238,9 @@ repeat:
 	 * checkpoint to free some more log space.
 	 */
 	needed = atomic_add_return(nblocks,
-				   &transaction->t_outstanding_credits);
+				   &transaction->t_outstanding_credits); /*nblocks*/
 
-	if (needed > journal->j_max_transaction_buffers) {
+	if (needed > journal->j_max_transaction_buffers /*8192 */) {
 		/*
 		 * If the current transaction is already too large, then start
 		 * to commit it: we can then go back and attach this handle to
@@ -258,8 +255,13 @@ repeat:
 		tid = transaction->t_tid;
 		need_to_start = !tid_geq(journal->j_commit_request, tid);
 		read_unlock(&journal->j_state_lock);
-		if (need_to_start)
+		if (need_to_start){
+#ifdef CONFIG_IOINSIGHT
+			jbd2_log_start_commit(journal, tid, transaction->t_fs_mapping);
+#else
 			jbd2_log_start_commit(journal, tid);
+#endif
+		}
 		schedule();
 		finish_wait(&journal->j_wait_transaction_locked, &wait);
 		goto repeat;
@@ -506,8 +508,13 @@ int jbd2__journal_restart(handle_t *handle, int nblocks, gfp_t gfp_mask)
 	tid = transaction->t_tid;
 	need_to_start = !tid_geq(journal->j_commit_request, tid);
 	read_unlock(&journal->j_state_lock);
-	if (need_to_start)
+	if (need_to_start) {
+#ifdef CONFIG_IOINSIGHT
+		jbd2_log_start_commit(journal, tid, transaction->t_fs_mapping);
+#else
 		jbd2_log_start_commit(journal, tid);
+#endif
+	}
 
 	lock_map_release(&handle->h_lockdep_map);
 	handle->h_buffer_credits = nblocks;
@@ -625,6 +632,7 @@ do_get_write_access(handle_t *handle, struct journal_head *jh,
 
 	if (is_handle_aborted(handle))
 		return -EROFS;
+
 
 	transaction = handle->h_transaction;
 	journal = transaction->t_journal;
@@ -1418,7 +1426,6 @@ int jbd2_journal_stop(handle_t *handle)
 	pid = current->pid;
 	if (handle->h_sync && journal->j_last_sync_writer != pid) {
 		u64 commit_time, trans_time;
-
 		journal->j_last_sync_writer = pid;
 
 		read_lock(&journal->j_state_lock);
@@ -1464,7 +1471,11 @@ int jbd2_journal_stop(handle_t *handle)
 		jbd_debug(2, "transaction too old, requesting commit for "
 					"handle %p\n", handle);
 		/* This is non-blocking */
+#ifdef CONFIG_IOINSIGHT
+		jbd2_log_start_commit(journal, transaction->t_tid, transaction->t_fs_mapping);
+#else
 		jbd2_log_start_commit(journal, transaction->t_tid);
+#endif
 
 		/*
 		 * Special case: JBD2_SYNC synchronous updates require us
@@ -1487,8 +1498,9 @@ int jbd2_journal_stop(handle_t *handle)
 			wake_up(&journal->j_wait_transaction_locked);
 	}
 
-	if (wait_for_commit)
+	if (wait_for_commit) {
 		err = jbd2_log_wait_commit(journal, tid);
+	}
 
 	lock_map_release(&handle->h_lockdep_map);
 
@@ -1508,7 +1520,6 @@ int jbd2_journal_force_commit(journal_t *journal)
 {
 	handle_t *handle;
 	int ret;
-
 	handle = jbd2_journal_start(journal, 1);
 	if (IS_ERR(handle)) {
 		ret = PTR_ERR(handle);

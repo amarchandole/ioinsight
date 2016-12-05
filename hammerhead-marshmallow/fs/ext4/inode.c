@@ -148,7 +148,11 @@ void ext4_evict_inode(struct inode *inode)
 			journal_t *journal = EXT4_SB(inode->i_sb)->s_journal;
 			tid_t commit_tid = EXT4_I(inode)->i_datasync_tid;
 
+			#ifdef CONFIG_IOINSIGHT
+			jbd2_log_start_commit(journal, commit_tid, journal->j_fs_mapping);
+#else
 			jbd2_log_start_commit(journal, commit_tid);
+#endif
 			jbd2_log_wait_commit(journal, commit_tid);
 			filemap_write_and_wait(&inode->i_data);
 		}

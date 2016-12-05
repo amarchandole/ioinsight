@@ -17,6 +17,12 @@
 #include <linux/backing-dev.h>
 #include "internal.h"
 
+
+#ifdef CONFIG_IOINSIGHT
+#include "../ioinsight/ioinsight_define.h"
+extern unsigned int at_fs_id;
+#endif
+
 #define VALID_FLAGS (SYNC_FILE_RANGE_WAIT_BEFORE|SYNC_FILE_RANGE_WRITE| \
 			SYNC_FILE_RANGE_WAIT_AFTER)
 
@@ -191,7 +197,17 @@ static int do_fsync(unsigned int fd, int datasync)
 
 	file = fget(fd);
 	if (file) {
+#ifdef CONFIG_IOINSIGHT
+		file->f_mapping->fs_id = ++at_fs_id;
+		file->f_mapping->fs_flags = AS_FS_FSYNC;
+		if (datasync)
+			file->f_mapping->fs_flags |= AS_FS_FDSYNC; 
 		ret = vfs_fsync(file, datasync);
+		file->f_mapping->fs_id = 0;
+		file->f_mapping->fs_flags = 0;
+#else
+		ret = vfs_fsync(file, datasync);	
+#endif
 		fput(file);
 	}
 	return ret;

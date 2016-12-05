@@ -327,6 +327,12 @@ static inline void ext4_update_inode_fsync_trans(handle_t *handle,
 		ei->i_sync_tid = handle->h_transaction->t_tid;
 		if (datasync)
 			ei->i_datasync_tid = handle->h_transaction->t_tid;
+	#ifdef CONFIG_IOINSIGHT										//get transaction id to verify req and its completion
+        if (datasync)
+       		inode->i_mapping->t_tid = ei->i_datasync_tid;
+        else
+            inode->i_mapping->t_tid = ei->i_sync_tid;
+	#endif
 	}
 }
 

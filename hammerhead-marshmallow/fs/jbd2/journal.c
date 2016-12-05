@@ -475,7 +475,11 @@ int __jbd2_log_space_left(journal_t *journal)
  * Called with j_state_lock locked for writing.
  * Returns true if a transaction commit was started.
  */
+#ifdef CONFIG_IOINSIGHT
+int __jbd2_log_start_commit(journal_t *journal, tid_t target, struct address_space *fs_mapping )
+#else
 int __jbd2_log_start_commit(journal_t *journal, tid_t target)
+#endif
 {
 	/*
 	 * The only transaction we can possibly wait upon is the
@@ -484,18 +488,22 @@ int __jbd2_log_start_commit(journal_t *journal, tid_t target)
 	 */
 	if (journal->j_running_transaction &&
 	    journal->j_running_transaction->t_tid == target) {
+
 		/*
 		 * We want a new commit: OK, mark the request and wakeup the
 		 * commit thread.  We do _not_ do the commit ourselves.
 		 */
-
 		journal->j_commit_request = target;
+#ifdef CONFIG_IOINSIGHT
+		if (!IS_ERR_OR_NULL(fs_mapping))
+			journal->j_running_transaction->t_fs_mapping = fs_mapping;
+#endif
 		jbd_debug(1, "JBD2: requesting commit %d/%d\n",
 			  journal->j_commit_request,
 			  journal->j_commit_sequence);
 		wake_up(&journal->j_wait_commit);
 		return 1;
-	} else if (!tid_geq(journal->j_commit_request, target))
+	} else if (!tid_geq(journal->j_commit_request, target)) {
 		/* This should never happen, but if it does, preserve
 		   the evidence before kjournald goes into a loop and
 		   increments j_commit_sequence beyond all recognition. */
@@ -504,15 +512,24 @@ int __jbd2_log_start_commit(journal_t *journal, tid_t target)
 			  journal->j_commit_sequence,
 			  target, journal->j_running_transaction ? 
 			  journal->j_running_transaction->t_tid : 0);
+	} 
 	return 0;
 }
-
+#ifdef CONFIG_IOINSIGHT
+int jbd2_log_start_commit(journal_t *journal, tid_t tid, struct address_space *fs_mapping)
+#else
 int jbd2_log_start_commit(journal_t *journal, tid_t tid)
+#endif
 {
 	int ret;
 
 	write_lock(&journal->j_state_lock);
+
+#ifdef CONFIG_IOINSIGHT
+	ret = __jbd2_log_start_commit(journal, tid, fs_mapping);
+#else
 	ret = __jbd2_log_start_commit(journal, tid);
+#endif
 	write_unlock(&journal->j_state_lock);
 	return ret;
 }
@@ -548,8 +565,14 @@ int jbd2_journal_force_commit_nested(journal_t *journal)
 
 	tid = transaction->t_tid;
 	read_unlock(&journal->j_state_lock);
-	if (need_to_start)
+
+	if (need_to_start){
+#ifdef CONFIG_IOINSIGHT
+		jbd2_log_start_commit(journal, tid, journal->j_fs_mapping);
+#else
 		jbd2_log_start_commit(journal, tid);
+#endif
+	}
 	jbd2_log_wait_commit(journal, tid);
 	return 1;
 }
@@ -566,8 +589,11 @@ int jbd2_journal_start_commit(journal_t *journal, tid_t *ptid)
 	write_lock(&journal->j_state_lock);
 	if (journal->j_running_transaction) {
 		tid_t tid = journal->j_running_transaction->t_tid;
-
+#ifdef CONFIG_IOINSIGHT
+		__jbd2_log_start_commit(journal, tid, journal->j_running_transaction->t_fs_mapping);
+#else
 		__jbd2_log_start_commit(journal, tid);
+#endif
 		/* There's a running transaction and we've just made sure
 		 * it's commit has been scheduled. */
 		if (ptid)
@@ -997,6 +1023,10 @@ static journal_t * journal_init_common (void)
 
 	/* The journal is marked for error until we succeed with recovery! */
 	journal->j_flags = JBD2_ABORT;
+
+#ifdef CONFIG_IOINSIGHT
+	journal->j_fs_mapping = NULL;
+#endif
 
 	/* Set up a default-sized revoke table for the new mount. */
 	err = jbd2_journal_init_revoke(journal, JOURNAL_REVOKE_DEFAULT_HASH);
@@ -1719,7 +1749,11 @@ int jbd2_journal_flush(journal_t *journal)
 	/* Force everything buffered to the log... */
 	if (journal->j_running_transaction) {
 		transaction = journal->j_running_transaction;
+#ifdef CONFIG_IOINSIGHT
+		__jbd2_log_start_commit(journal, transaction->t_tid, transaction->t_fs_mapping);
+#else
 		__jbd2_log_start_commit(journal, transaction->t_tid);
+#endif 
 	} else if (journal->j_committing_transaction)
 		transaction = journal->j_committing_transaction;
 
@@ -1834,8 +1868,13 @@ void __jbd2_journal_abort_hard(journal_t *journal)
 	write_lock(&journal->j_state_lock);
 	journal->j_flags |= JBD2_ABORT;
 	transaction = journal->j_running_transaction;
-	if (transaction)
+	if (transaction) {
+#ifdef CONFIG_IOINSIGHT
+		__jbd2_log_start_commit(journal, transaction->t_tid, transaction->t_fs_mapping);
+#else
 		__jbd2_log_start_commit(journal, transaction->t_tid);
+#endif
+	}
 	write_unlock(&journal->j_state_lock);
 }
 

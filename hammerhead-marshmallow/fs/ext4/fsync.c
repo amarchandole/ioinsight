@@ -252,6 +252,9 @@ int ext4_sync_file(struct file *file, loff_t start, loff_t end, int datasync)
 	 *  safe in-journal, which is all fsync() needs to ensure.
 	 */
 	if (ext4_should_journal_data(inode)) {
+#ifdef CONFIG_IOINSIGHT		//copy inode mapping to journal fs mapping to track inode and other info
+		journal->j_fs_mapping = inode->i_mapping;
+#endif
 		ret = ext4_force_commit(inode->i_sb);
 		goto out;
 	}
@@ -260,12 +263,22 @@ int ext4_sync_file(struct file *file, loff_t start, loff_t end, int datasync)
 	if (journal->j_flags & JBD2_BARRIER &&
 	    !jbd2_trans_will_send_data_barrier(journal, commit_tid))
 		needs_barrier = true;
+
+#ifdef CONFIG_IOINSIGHT
+	jbd2_log_start_commit(journal, commit_tid, inode->i_mapping);
+#else
 	jbd2_log_start_commit(journal, commit_tid);
+#endif
+
 	ret = jbd2_log_wait_commit(journal, commit_tid);
 	if (needs_barrier)
 		blkdev_issue_flush(inode->i_sb->s_bdev, GFP_KERNEL, NULL);
  out:
 	mutex_unlock(&inode->i_mutex);
 	trace_ext4_sync_file_exit(inode, ret);
+#ifdef CONFIG_IOINSIGHT 
+	if (!IS_ERR_OR_NULL(file->f_mapping))
+		file->f_mapping->t_tid = 0; 	//case of data block
+#endif
 	return ret;
 }

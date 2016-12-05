@@ -1,5 +1,4 @@
-/*
- * linux/fs/jbd2/commit.c
+/* linux/fs/jbd2/commit.c
  *
  * Written by Stephen C. Tweedie <sct@redhat.com>, 1998
  *
@@ -35,11 +34,13 @@
 static void journal_end_buffer_io_sync(struct buffer_head *bh, int uptodate)
 {
 	BUFFER_TRACE(bh, "");
+
 	if (uptodate)
 		set_buffer_uptodate(bh);
 	else
 		clear_buffer_uptodate(bh);
 	unlock_buffer(bh);
+
 }
 
 /*
@@ -137,10 +138,11 @@ static int journal_submit_commit_record(journal_t *journal,
 
 	if (journal->j_flags & JBD2_BARRIER &&
 	    !JBD2_HAS_INCOMPAT_FEATURE(journal,
-				       JBD2_FEATURE_INCOMPAT_ASYNC_COMMIT))
-		ret = submit_bh(WRITE_SYNC | WRITE_FLUSH_FUA, bh);
-	else
+				       JBD2_FEATURE_INCOMPAT_ASYNC_COMMIT)){
+		ret = submit_bh(WRITE_SYNC | WRITE_FLUSH_FUA, bh); //no cache ->flush to eMMC directly
+	}else{
 		ret = submit_bh(WRITE_SYNC, bh);
+	}
 
 	*cbh = bh;
 	return ret;
@@ -201,6 +203,7 @@ static int journal_submit_data_buffers(journal_t *journal,
 	int err, ret = 0;
 	struct address_space *mapping;
 
+
 	spin_lock(&journal->j_list_lock);
 	list_for_each_entry(jinode, &commit_transaction->t_inode_list, i_list) {
 		mapping = jinode->i_vfs_inode->i_mapping;
@@ -223,6 +226,8 @@ static int journal_submit_data_buffers(journal_t *journal,
 		wake_up_bit(&jinode->i_flags, __JI_COMMIT_RUNNING);
 	}
 	spin_unlock(&journal->j_list_lock);
+
+
 	return ret;
 }
 
@@ -236,6 +241,7 @@ static int journal_finish_inode_data_buffers(journal_t *journal,
 {
 	struct jbd2_inode *jinode, *next_i;
 	int err, ret = 0;
+
 
 	/* For locking, see the comment in journal_submit_data_buffers() */
 	spin_lock(&journal->j_list_lock);
@@ -335,13 +341,18 @@ void jbd2_journal_commit_transaction(journal_t *journal)
 	tid_t first_tid;
 	int update_tail;
 
+#ifdef CONFIG_IOINSIGHT
+	struct buffer_head *bh_meta = NULL;
+	struct address_space *fs_mapping= NULL;	
+#endif
+
 	/*
 	 * First job: lock down the current transaction and wait for
 	 * all outstanding updates to complete.
 	 */
 
 	/* Do we need to erase the effects of a prior jbd2_journal_flush? */
-	if (journal->j_flags & JBD2_FLUSHED) {
+	if (journal->j_flags & JBD2_FLUSHED) { /* journal superblock has been flushed */
 		jbd_debug(3, "super block updated\n");
 		mutex_lock(&journal->j_checkpoint_mutex);
 		/*
@@ -350,8 +361,9 @@ void jbd2_journal_commit_transaction(journal_t *journal)
 		 * since journal is empty and it is ok for write to be
 		 * flushed only with transaction commit.
 		 */
+		/* journal, tail's sequence, tails' first block */
 		jbd2_journal_update_sb_log_tail(journal,
-						journal->j_tail_sequence,
+						journal->j_tail_sequence, 
 						journal->j_tail,
 						WRITE_SYNC);
 		mutex_unlock(&journal->j_checkpoint_mutex);
@@ -366,7 +378,7 @@ void jbd2_journal_commit_transaction(journal_t *journal)
 	J_ASSERT(commit_transaction->t_state == T_RUNNING);
 
 	trace_jbd2_start_commit(journal, commit_transaction);
-	jbd_debug(1, "JBD2: starting commit of transaction %d\n",
+	jbd_debug(1, "jbd2: starting commit of transaction %d\n",
 			commit_transaction->t_tid);
 
 	write_lock(&journal->j_state_lock);
@@ -378,6 +390,14 @@ void jbd2_journal_commit_transaction(journal_t *journal)
 	stats.run.rs_running = jbd2_time_diff(commit_transaction->t_start,
 					      stats.run.rs_locked);
 
+	/* 
+	all of the pending handles to be completed.
+	when jbd2 layer starts working on the commit, 
+	the first thing it does is lock down the transaction ,so new handles can be started.
+	it waits for all currently started handles can complete. 
+	while we are waiting for handles to close, no to keep handle processing time
+	as short as possible, but there are cases where this is not possile, or at least not easy.
+    	*/
 	spin_lock(&commit_transaction->t_handle_lock);
 	while (atomic_read(&commit_transaction->t_updates)) {
 		DEFINE_WAIT(wait);
@@ -400,7 +420,7 @@ void jbd2_journal_commit_transaction(journal_t *journal)
 
 	/*
 	 * First thing we are allowed to do is to discard any remaining
-	 * BJ_Reserved buffers.  Note, it is _not_ permissible to assume
+	 * BJ_Reserved buffers.  Note, it is _not_ permissible(allow) to assume(maybe, predict)
 	 * that there are no such buffers: if a large filesystem
 	 * operation like a truncate needs to split itself over multiple
 	 * transactions, then it may try to do a jbd2_journal_restart() while
@@ -508,8 +528,26 @@ void jbd2_journal_commit_transaction(journal_t *journal)
 	descriptor = NULL;
 	bufs = 0;
 	blk_start_plug(&plug);
-	while (commit_transaction->t_buffers) {
 
+#ifdef CONFIG_IOINSIGHT
+        if (commit_transaction->t_buffers) {
+                jh = commit_transaction->t_buffers;
+                bh_meta = jh2bh(jh);
+                if ( !(IS_ERR_OR_NULL(journal->j_fs_mapping)) ) 
+                        fs_mapping = journal->j_fs_mapping;
+                if (  !(IS_ERR_OR_NULL(commit_transaction->t_fs_mapping)) )
+                        fs_mapping = commit_transaction->t_fs_mapping;
+		if ( !(IS_ERR_OR_NULL(fs_mapping)) ) {
+	                bh_meta->b_page->mapping->fs_flags = fs_mapping->fs_flags;
+        	        bh_meta->b_page->mapping->fs_id =  fs_mapping->fs_id;
+		}
+		else {
+            		bh_meta->b_page->mapping->fs_flags = 0;
+        	        bh_meta->b_page->mapping->fs_id =  0;
+		}
+        }
+#endif
+	while (commit_transaction->t_buffers) {
 		/* Find the next buffer to be journaled... */
 
 		jh = commit_transaction->t_buffers;
@@ -539,7 +577,6 @@ void jbd2_journal_commit_transaction(journal_t *journal)
 
 		if (!descriptor) {
 			struct buffer_head *bh;
-
 			J_ASSERT (bufs == 0);
 
 			jbd_debug(4, "JBD2: get descriptor\n");
@@ -568,6 +605,7 @@ void jbd2_journal_commit_transaction(journal_t *journal)
 			/* Record it so that we can wait for IO
                            completion later */
 			BUFFER_TRACE(bh, "ph3: file as descriptor");
+
 			jbd2_journal_file_buffer(descriptor, commit_transaction,
 					BJ_LogCtl);
 		}
@@ -681,6 +719,8 @@ start_journal_io:
 		}
 	}
 
+	// ryoung: wait to asynchronous write related with inode in journal transaction 
+	// filemap_fdatawait() ->writeback
 	err = journal_finish_inode_data_buffers(journal, commit_transaction);
 	if (err) {
 		printk(KERN_WARNING
@@ -690,6 +730,8 @@ start_journal_io:
 			jbd2_journal_abort(journal, err);
 		err = 0;
 	}
+
+	// ryoung: end of descriptor block with meta block 
 
 	/*
 	 * Get current oldest transaction in the log before we issue flush
@@ -722,16 +764,19 @@ start_journal_io:
 	 */
 	if (commit_transaction->t_need_data_flush &&
 	    (journal->j_fs_dev != journal->j_dev) &&
-	    (journal->j_flags & JBD2_BARRIER))
+	    (journal->j_flags & JBD2_BARRIER)){
 		blkdev_issue_flush(journal->j_fs_dev, GFP_NOFS, NULL);
+	}
 
 	/* Done it all: now write the commit record asynchronously. */
 	if (JBD2_HAS_INCOMPAT_FEATURE(journal,
 				      JBD2_FEATURE_INCOMPAT_ASYNC_COMMIT)) {
 		err = journal_submit_commit_record(journal, commit_transaction,
 						 &cbh, crc32_sum);
-		if (err)
+		if (err) {
 			__jbd2_journal_abort_hard(journal);
+			goto mapping_jbd_init; /* +ryoung init mapping->fsync, tid, .. */
+		}
 	}
 
 	blk_finish_plug(&plug);
@@ -821,6 +866,7 @@ wait_for_iobuf:
 		jh = commit_transaction->t_log_list->b_tprev;
 		bh = jh2bh(jh);
 		if (buffer_locked(bh)) {
+
 			wait_on_buffer(bh);
 			goto wait_for_ctlbuf;
 		}
@@ -854,8 +900,10 @@ wait_for_iobuf:
 		if (err)
 			__jbd2_journal_abort_hard(journal);
 	}
-	if (cbh)
+	if (cbh) {
 		err = journal_wait_on_commit_record(journal, cbh);
+	}
+
 	if (JBD2_HAS_INCOMPAT_FEATURE(journal,
 				      JBD2_FEATURE_INCOMPAT_ASYNC_COMMIT) &&
 	    journal->j_flags & JBD2_BARRIER) {
@@ -1092,5 +1140,14 @@ restart_loop:
 	if (to_free)
 		jbd2_journal_free_transaction(commit_transaction);
 
+mapping_jbd_init:
+#ifdef CONFIG_IOINSIGHT
+	if (!IS_ERR_OR_NULL(bh_meta)) {
+		if (!IS_ERR_OR_NULL(fs_mapping)) {
+			bh_meta->b_page->mapping->fs_id = 0;
+			bh_meta->b_page->mapping->fs_flags= 0;
+		}
+	}
+#endif
 	wake_up(&journal->j_wait_done_commit);
 }
