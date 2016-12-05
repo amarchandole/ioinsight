@@ -712,7 +712,11 @@ export mod_strip_cmd
 
 
 ifeq ($(KBUILD_EXTMOD),)
+ifdef CONFIG_ANDROTRACE
+core-y		+= ioinsight/ kernel/ mm/ fs/ ipc/ security/ crypto/ block/
+else
 core-y		+= kernel/ mm/ fs/ ipc/ security/ crypto/ block/
+endif
 
 vmlinux-dirs	:= $(patsubst %/,%,$(filter %/, $(init-y) $(init-m) \
 		     $(core-y) $(core-m) $(drivers-y) $(drivers-m) \
