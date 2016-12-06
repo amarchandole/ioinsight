@@ -1,6 +1,6 @@
 # Makefile for ioinsight
 #
 
-obj-$(CONFIG_BLOCK) += ioinsight.o
+obj-$(CONFIG_IOINSIGHT) += ioinsight.o
 
 obj-y := ioinsight.o

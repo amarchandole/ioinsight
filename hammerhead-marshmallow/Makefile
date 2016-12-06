@@ -712,7 +712,7 @@ export mod_strip_cmd
 
 
 ifeq ($(KBUILD_EXTMOD),)
-ifdef CONFIG_ANDROTRACE
+ifdef CONFIG_IOINSIGHT
 core-y		+= ioinsight/ kernel/ mm/ fs/ ipc/ security/ crypto/ block/
 else
 core-y		+= kernel/ mm/ fs/ ipc/ security/ crypto/ block/

@@ -16,7 +16,13 @@
 #define BLOCK_NONE 4 
 
 /* process name*/
-#define PNAME_MAX 16
+#define PNAME_MAX 30
+
+/* trace type */
+#define TRACE_IO 1
+#define TRACE_FILELS 2
+#define TRACE_SQLITE 3
+#define TRACE_SUSPEND 4
 
 #pragma pack(push,1)
 struct at_header{

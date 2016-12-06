@@ -41,6 +41,7 @@ struct bio {
 						 */
 #ifdef CONFIG_IOINSIGHT
 	pid_t			bi_pid;		// to find the process that issued this particular bio request
+	pid_t			bi_tgid;
 	
 #endif
 	unsigned short		bi_vcnt;	/* how many bio_vec's */

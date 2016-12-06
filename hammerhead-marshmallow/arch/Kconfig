@@ -1,7 +1,9 @@
 #
 # General architecture dependent options
 #
-
+config IOINSIGHT
+	bool "HURRAYYY"
+	
 config OPROFILE
 	tristate "OProfile system profiling"
 	depends on PROFILING

@@ -1824,8 +1824,8 @@ void submit_bio(int rw, struct bio *bio)
 		 if (bio && bio->bi_io_vec && bio->bi_io_vec->bv_page
                    && bio->bi_io_vec->bv_page->mapping) 
 			bio->bi_pid = task_pid_nr(current);
-#endif
-		
+			bio->bi_tgid = task_tgid_nr(current);
+#endif		
 	}
 
 	generic_make_request(bio);

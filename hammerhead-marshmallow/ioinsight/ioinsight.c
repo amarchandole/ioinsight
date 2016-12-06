@@ -1,6 +1,5 @@
 #include "ioinsight.h"
 #include "ioinsight_define.h"
-#include "common.h"
 unsigned int at_fs_id = 0;
 
 void __fill_header(unsigned char type, struct at_header *header)
@@ -17,7 +16,7 @@ void __fill_header(unsigned char type, struct at_header *header)
 	time_to_tm(ts_now.tv_sec, 0, &tm);
 
 	//collect log data
-	header->year = tm.tm_year + 1900 - YEAR_BASE //2000;
+	header->year = tm.tm_year + 1900 - YEAR_BASE; //2000;
 	header->month = tm.tm_mon + 1;
 	header->day = tm.tm_mday;
 	header->hour = tm.tm_hour;
@@ -76,7 +75,6 @@ bool ioinsight_add_io(struct request *rq, bool is_issue)
 			bio_buf = bio_data(bio);
 		if (PageAnon(bio->bi_io_vec->bv_page)) { //page->mapping points to anon_vma object, not address_space 
 			log.block_type = BLOCK_ANON;
-			log.file_type = ANON_FILE;
 		} else { //page->mappings points to address_space object 
 
 			mapping = bio->bi_io_vec->bv_page->mapping;
@@ -89,7 +87,6 @@ bool ioinsight_add_io(struct request *rq, bool is_issue)
 				if (dentry->d_name.len > 0) {
 					fname = (char*)dentry->d_name.name;
 					fname_len = strlen(fname);
-					log.file_type = get_file_type(fname);
 				}
 				log.major_dev = MAJOR(inode->i_sb->s_dev);
 				log.minor_dev = MINOR(inode->i_sb->s_dev);
@@ -144,8 +141,8 @@ bool ioinsight_add_io(struct request *rq, bool is_issue)
 		log.block_len = (int)blk_rq_bytes(rq) / 512;		//one block is 512 bytes, so block_len is the number of blocks accessed
 		if (bio->bi_pid != 0) {
 			bio_task = find_task_by_vpid(bio->bi_pid);
-			log.pid = -1;//bio_task->pid;
-			log.tgid = -1;//bio_task->tgid;
+			log.pid = bio->bi_pid;
+			log.tgid = bio->bi_tgid;
 			log.ppid = -1;
 
 			if (!IS_ERR_OR_NULL(bio_task) &&
@@ -195,10 +192,15 @@ bool ioinsight_add_io(struct request *rq, bool is_issue)
 		else if (log.block_type == BLOCK_NONE)
 			str_bt = "N";
 
-		snprintf(str_log, sizeof(str_log), "\n+%d,%d,%d,%d,%d,%s,%s,%d,%d,%s,%s,%s,%s,%s,%d,%d!",
+		/*snprintf(str_log, sizeof(str_log), "\n+%d,%d,%d,%d,%d,%s,%s,%d,%d,%s,%s,%s,%s,%s,%d,%d!",
 		is_issue, header.hour, header.min, header.sec, header.nsec, 
 		pname, fname, log_ws.t_id, log_ws.fs_id, 
-		str_rwbs, str_bt, str_fsync_sqlite, str_fsync, str_fdatasync, log.sector_nb, log.block_len);
+		str_rwbs, str_bt, str_fsync_sqlite, str_fsync, str_fdatasync, log.sector_nb, log.block_len);*/
+
+		snprintf(str_log, sizeof(str_log), "\n+%d,%d,%d,%d,%d,%s,%s,%d,%d,%s,%s,%s,%s,%s,%d,%d,%d,%d!",
+		is_issue, header.hour, header.min, header.sec, header.nsec, 
+		pname, fname, log_ws.t_id, log_ws.fs_id, 
+		str_rwbs, str_bt, str_fsync_sqlite, str_fsync, str_fdatasync, log.sector_nb, log.block_len, log.pid, log.tgid);
 
 		printk(KERN_EMERG "\t%s\n", str_log);
 	}
