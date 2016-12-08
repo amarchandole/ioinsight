@@ -1,0 +1,831 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView android:id="@+id/scrollView" xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:scrollbars="none"
+    android:layout_weight="1">
+
+    <TableLayout android:id="@+id/tableLayout" xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:stretchColumns="1">
+
+        <TableRow>
+            <TextView
+                android:textColor="#000000"
+                android:text="APPLICATION NAME"
+                android:layout_gravity="start"
+                android:textSize="25dp"
+                android:layout_marginBottom="20dp"
+                android:padding="3dip" />
+        </TableRow>
+
+        <TableRow>
+
+            <TextView
+                android:text="Total Requests"
+                android:textColor="#000000"
+                android:layout_height="match_parent"
+                android:layout_width="match_parent"
+                android:layout_gravity="start"
+                android:layout_weight="0.2"
+                android:layout_marginBottom="20dp"
+                android:textSize="18dp"
+                android:padding="3dip" />
+            <TextView
+                android:text="0"
+                android:textColor="#000000"
+                android:layout_column="1"
+                android:layout_height="match_parent"
+                android:layout_width="match_parent"
+                android:layout_gravity="right"
+                android:layout_weight="0.2"
+                android:layout_marginBottom="20dp"
+                android:textSize="18dp"
+                android:padding="3dip" />
+        </TableRow>
+
+        <TableRow>
+            <TextView
+                android:textColor="#000000"
+                android:text="Data Block Read"
+                android:layout_gravity="start"
+                android:layout_weight="0.2"
+                android:layout_marginBottom="20dp"
+                android:textSize="18dp"
+                android:padding="3dip" />
+            <TextView
+                android:textColor="#000000"
+                android:text="0"
+                android:layout_column="1"
+                android:layout_gravity="right"
+                android:layout_weight="0.2"
+                android:layout_marginBottom="20dp"
+                android:textSize="18dp"
+                android:padding="3dip" />
+        </TableRow>
+
+        <TableRow>
+            <TextView
+                android:textColor="#000000"
+                android:text="Data Block Write"
+                android:layout_gravity="start"
+                android:layout_weight="0.2"
+                android:layout_marginBottom="20dp"
+                android:textSize="18dp"
+                android:padding="3dip" />
+            <TextView
+                android:textColor="#000000"
+                android:text="0"
+                android:layout_column="1"
+                android:layout_gravity="right"
+                android:layout_weight="0.2"
+                android:layout_marginBottom="20dp"
+                android:textSize="18dp"
+                android:padding="3dip" />
+        </TableRow>
+
+        <TableRow>
+            <TextView
+                android:textColor="#000000"
+                android:text="Data Block Write Sync"
+                android:layout_gravity="start"
+                android:layout_weight="0.2"
+                android:layout_marginBottom="20dp"
+                android:textSize="18dp"
+                android:padding="3dip" />
+            <TextView
+                android:textColor="#000000"
+                android:text="0"
+                android:layout_column="1"
+                android:layout_gravity="right"
+                android:layout_weight="0.2"
+                android:layout_marginBottom="20dp"
+                android:textSize="18dp"
+                android:padding="3dip" />
+        </TableRow>
+
+        <TableRow>
+            <TextView
+                android:textColor="#000000"
+                android:text="Journal Block Read"
+                android:layout_gravity="start"
+                android:layout_weight="0.2"
+                android:layout_marginBottom="20dp"
+                android:textSize="18dp"
+                android:padding="3dip" />
+            <TextView
+                android:textColor="#000000"
+                android:text="0"
+                android:layout_column="1"
+                android:layout_gravity="right"
+                android:layout_weight="0.2"
+                android:layout_marginBottom="20dp"
+                android:textSize="18dp"
+                android:padding="3dip" />
+        </TableRow>
+
+        <TableRow>
+            <TextView
+                android:textColor="#000000"
+                android:text="Journal Block Write"
+                android:layout_gravity="start"
+                android:layout_weight="0.2"
+                android:layout_marginBottom="20dp"
+                android:textSize="18dp"
+                android:padding="3dip" />
+            <TextView
+                android:textColor="#000000"
+                android:text="0"
+                android:layout_column="1"
+                android:layout_gravity="right"
+                android:layout_weight="0.2"
+                android:layout_marginBottom="20dp"
+                android:textSize="18dp"
+                android:padding="3dip" />
+        </TableRow>
+
+        <TableRow>
+            <TextView
+                android:textColor="#000000"
+                android:text="Journal Block Write Sync"
+                android:layout_gravity="start"
+                android:layout_weight="0.2"
+                android:layout_marginBottom="20dp"
+                android:textSize="18dp"
+                android:padding="3dip" />
+            <TextView
+                android:textColor="#000000"
+                android:text="0"
+                android:layout_column="1"
+                android:layout_gravity="right"
+                android:layout_weight="0.2"
+                android:layout_marginBottom="20dp"
+                android:textSize="18dp"
+                android:padding="3dip" />
+        </TableRow>
+
+        <TableRow>
+            <TextView
+                android:textColor="#000000"
+                android:text="Meta Block Read"
+                android:layout_gravity="start"
+                android:layout_weight="0.2"
+                android:layout_marginBottom="20dp"
+                android:textSize="18dp"
+                android:padding="3dip" />
+            <TextView
+                android:textColor="#000000"
+                android:text="0"
+                android:layout_column="1"
+                android:layout_gravity="right"
+                android:layout_weight="0.2"
+                android:layout_marginBottom="20dp"
+                android:textSize="18dp"
+                android:padding="3dip" />
+        </TableRow>
+
+        <TableRow>
+            <TextView
+                android:textColor="#000000"
+                android:text="Meta Block Write"
+                android:layout_gravity="start"
+                android:layout_weight="0.2"
+                android:layout_marginBottom="20dp"
+                android:textSize="18dp"
+                android:padding="3dip" />
+            <TextView
+                android:textColor="#000000"
+                android:text="0"
+                android:layout_column="1"
+                android:layout_gravity="right"
+                android:layout_weight="0.2"
+                android:layout_marginBottom="20dp"
+                android:textSize="18dp"
+                android:padding="3dip" />
+        </TableRow>
+
+        <TableRow>
+            <TextView
+                android:textColor="#000000"
+                android:text="Meta Block Write Sync"
+                android:layout_gravity="start"
+                android:layout_weight="0.2"
+                android:layout_marginBottom="20dp"
+                android:textSize="18dp"
+                android:padding="3dip" />
+            <TextView
+                android:textColor="#000000"
+                android:text="0"
+                android:layout_column="1"
+                android:layout_gravity="right"
+                android:layout_weight="0.2"
+                android:layout_marginBottom="20dp"
+                android:textSize="18dp"
+                android:padding="3dip" />
+        </TableRow>
+
+        <TableRow>
+            <TextView
+                android:textColor="#000000"
+                android:text="Async Block Read"
+                android:layout_gravity="start"
+                android:layout_weight="0.2"
+                android:layout_marginBottom="20dp"
+                android:textSize="18dp"
+                android:padding="3dip" />
+            <TextView
+                android:textColor="#000000"
+                android:text="0"
+                android:layout_column="1"
+                android:layout_gravity="right"
+                android:layout_weight="0.2"
+                android:layout_marginBottom="20dp"
+                android:textSize="18dp"
+                android:padding="3dip" />
+        </TableRow>
+
+        <TableRow>
+            <TextView
+                android:textColor="#000000"
+                android:text="Async Block Write"
+                android:layout_gravity="start"
+                android:layout_weight="0.2"
+                android:layout_marginBottom="20dp"
+                android:textSize="18dp"
+                android:padding="3dip" />
+            <TextView
+                android:textColor="#000000"
+                android:text="0"
+                android:layout_column="1"
+                android:layout_gravity="right"
+                android:layout_weight="0.2"
+                android:layout_marginBottom="20dp"
+                android:textSize="18dp"
+                android:padding="3dip" />
+        </TableRow>
+
+        <TableRow>
+            <TextView
+                android:textColor="#000000"
+                android:text="Async Block Write Sync"
+                android:layout_gravity="start"
+                android:layout_weight="0.2"
+                android:layout_marginBottom="20dp"
+                android:textSize="18dp"
+                android:padding="3dip" />
+            <TextView
+                android:textColor="#000000"
+                android:text="0"
+                android:layout_column="1"
+                android:layout_gravity="right"
+                android:layout_weight="0.2"
+                android:layout_marginBottom="20dp"
+                android:textSize="18dp"
+                android:padding="3dip" />
+        </TableRow>
+
+        <TableRow>
+            <TextView
+                android:textColor="#000000"
+                android:text="None Block Read"
+                android:layout_gravity="start"
+                android:layout_weight="0.2"
+                android:layout_marginBottom="20dp"
+                android:textSize="18dp"
+                android:padding="3dip" />
+            <TextView
+                android:textColor="#000000"
+                android:text="0"
+                android:layout_column="1"
+                android:layout_gravity="right"
+                android:layout_weight="0.2"
+                android:layout_marginBottom="20dp"
+                android:textSize="18dp"
+                android:padding="3dip" />
+        </TableRow>
+
+        <TableRow>
+            <TextView
+                android:textColor="#000000"
+                android:text="None Block Write"
+                android:layout_gravity="start"
+                android:layout_weight="0.2"
+                android:layout_marginBottom="20dp"
+                android:textSize="18dp"
+                android:padding="3dip" />
+            <TextView
+                android:textColor="#000000"
+                android:text="0"
+                android:layout_column="1"
+                android:layout_gravity="right"
+                android:layout_weight="0.2"
+                android:layout_marginBottom="20dp"
+                android:textSize="18dp"
+                android:padding="3dip" />
+        </TableRow>
+
+        <TableRow>
+            <TextView
+                android:textColor="#000000"
+                android:text="None Block Write Sync"
+                android:layout_gravity="start"
+                android:layout_weight="0.2"
+                android:layout_marginBottom="20dp"
+                android:textSize="18dp"
+                android:padding="3dip" />
+            <TextView
+                android:textColor="#000000"
+                android:text="0"
+                android:layout_column="1"
+                android:layout_gravity="right"
+                android:layout_weight="0.2"
+                android:layout_marginBottom="20dp"
+                android:textSize="18dp"
+                android:padding="3dip" />
+        </TableRow>
+
+        <TableRow>
+            <TextView
+                android:textColor="#000000"
+                android:text="Db File Read"
+             android:layout_marginBottom="20dp"
+                android:textSize="18dp"
+                android:layout_gravity="start"
+                android:padding="3dip" />
+            <TextView
+                android:textColor="#000000"
+                android:layout_marginBottom="20dp"
+                android:textSize="18dp"
+                android:text="0"
+                android:layout_column="1"
+                android:layout_gravity="right"
+                android:padding="3dip" />
+        </TableRow>
+
+        <TableRow>
+            <TextView
+                android:textColor="#000000"
+                android:text="Db File Write"
+             android:layout_marginBottom="20dp"
+                android:textSize="18dp"
+                android:layout_gravity="start"
+                android:padding="3dip" />
+            <TextView
+                android:textColor="#000000"
+                android:layout_marginBottom="20dp"
+                android:textSize="18dp"
+                android:text="0"
+                android:layout_column="1"
+                android:layout_gravity="right"
+                android:padding="3dip" />
+        </TableRow>
+
+        <TableRow>
+            <TextView
+                android:textColor="#000000"
+                android:text="Db File Write Sync"
+             android:layout_marginBottom="20dp"
+                android:textSize="18dp"
+                android:layout_gravity="start"
+                android:padding="3dip" />
+            <TextView
+                android:textColor="#000000"
+                android:layout_marginBottom="20dp"
+                android:textSize="18dp"
+                android:text="0"
+                android:layout_column="1"
+                android:layout_gravity="right"
+                android:padding="3dip" />
+        </TableRow>
+
+        <TableRow>
+            <TextView
+                android:textColor="#000000"
+                android:text="Db Journal File Read"
+                android:layout_marginBottom="20dp"
+                android:textSize="18dp"
+                android:layout_gravity="start"
+                android:padding="3dip" />
+            <TextView
+                android:textColor="#000000"
+                android:layout_marginBottom="20dp"
+                android:textSize="18dp"
+                android:text="0"
+                android:layout_column="1"
+                android:layout_gravity="right"
+                android:padding="3dip" />
+        </TableRow>
+
+        <TableRow>
+            <TextView
+                android:textColor="#000000"
+                android:text="Db Journal File Write"
+                android:layout_marginBottom="20dp"
+                android:textSize="18dp"
+                android:layout_gravity="start"
+                android:padding="3dip" />
+            <TextView
+                android:textColor="#000000"
+                android:layout_marginBottom="20dp"
+                android:textSize="18dp"
+                android:text="0"
+                android:layout_column="1"
+                android:layout_gravity="right"
+                android:padding="3dip" />
+        </TableRow>
+
+        <TableRow>
+            <TextView
+                android:textColor="#000000"
+                android:text="Db Journal File Write Sync"
+                android:layout_marginBottom="20dp"
+                android:textSize="18dp"
+                android:layout_gravity="start"
+                android:padding="3dip" />
+            <TextView
+                android:textColor="#000000"
+                android:layout_marginBottom="20dp"
+                android:textSize="18dp"
+                android:text="0"
+                android:layout_column="1"
+                android:layout_gravity="right"
+                android:padding="3dip" />
+        </TableRow>
+
+        <TableRow>
+            <TextView
+                android:textColor="#000000"
+                android:text="Executable File Read"
+                android:layout_marginBottom="20dp"
+                android:textSize="18dp"
+                android:layout_gravity="start"
+                android:padding="3dip" />
+            <TextView
+                android:textColor="#000000"
+                android:layout_marginBottom="20dp"
+                android:textSize="18dp"
+                android:text="0"
+                android:layout_column="1"
+                android:layout_gravity="right"
+                android:padding="3dip" />
+        </TableRow>
+
+        <TableRow>
+            <TextView
+                android:textColor="#000000"
+                android:text="Executable File Write"
+                android:layout_marginBottom="20dp"
+                android:textSize="18dp"
+                android:layout_gravity="start"
+                android:padding="3dip" />
+            <TextView
+                android:textColor="#000000"
+                android:layout_marginBottom="20dp"
+                android:textSize="18dp"
+                android:text="0"
+                android:layout_column="1"
+                android:layout_gravity="right"
+                android:padding="3dip" />
+        </TableRow>
+
+        <TableRow>
+            <TextView
+                android:textColor="#000000"
+                android:text="Executable File Write Sync"
+                android:layout_marginBottom="20dp"
+                android:textSize="18dp"
+                android:layout_gravity="start"
+                android:padding="3dip" />
+            <TextView
+                android:textColor="#000000"
+                android:layout_marginBottom="20dp"
+                android:textSize="18dp"
+                android:text="0"
+                android:layout_column="1"
+                android:layout_gravity="right"
+                android:padding="3dip" />
+        </TableRow>
+
+        <TableRow>
+            <TextView
+                android:textColor="#000000"
+                android:text="Resource File Read"
+                android:layout_marginBottom="20dp"
+                android:textSize="18dp"
+                android:layout_gravity="start"
+                android:padding="3dip" />
+            <TextView
+                android:textColor="#000000"
+                android:layout_marginBottom="20dp"
+                android:textSize="18dp"
+                android:text="0"
+                android:layout_column="1"
+                android:layout_gravity="right"
+                android:padding="3dip" />
+        </TableRow>
+
+        <TableRow>
+            <TextView
+                android:textColor="#000000"
+                android:text="Resource File Write"
+                android:layout_marginBottom="20dp"
+                android:textSize="18dp"
+                android:layout_gravity="start"
+                android:padding="3dip" />
+            <TextView
+                android:textColor="#000000"
+                android:layout_marginBottom="20dp"
+                android:textSize="18dp"
+                android:text="0"
+                android:layout_column="1"
+                android:layout_gravity="right"
+                android:padding="3dip" />
+        </TableRow>
+
+        <TableRow>
+            <TextView
+                android:textColor="#000000"
+                android:text="Resource File Write Sync"
+                android:layout_marginBottom="20dp"
+                android:textSize="18dp"
+                android:layout_gravity="start"
+                android:padding="3dip" />
+            <TextView
+                android:textColor="#000000"
+                android:layout_marginBottom="20dp"
+                android:textSize="18dp"
+                android:text="0"
+                android:layout_column="1"
+                android:layout_gravity="right"
+                android:padding="3dip" />
+        </TableRow>
+
+        <TableRow>
+            <TextView
+                android:textColor="#000000"
+                android:text="Other File Read"
+                android:layout_marginBottom="20dp"
+                android:textSize="18dp"
+                android:layout_gravity="start"
+                android:padding="3dip" />
+            <TextView
+                android:textColor="#000000"
+                android:layout_marginBottom="20dp"
+                android:textSize="18dp"
+                android:text="0"
+                android:layout_column="1"
+                android:layout_gravity="right"
+                android:padding="3dip" />
+        </TableRow>
+
+        <TableRow>
+            <TextView
+                android:textColor="#000000"
+                android:text="Other File Write"
+                android:layout_marginBottom="20dp"
+                android:textSize="18dp"
+                android:layout_gravity="start"
+                android:padding="3dip" />
+            <TextView
+                android:textColor="#000000"
+                android:layout_marginBottom="20dp"
+                android:textSize="18dp"
+                android:text="0"
+                android:layout_column="1"
+                android:layout_gravity="right"
+                android:padding="3dip" />
+        </TableRow>
+
+        <TableRow>
+            <TextView
+                android:textColor="#000000"
+                android:text="Other File Write Sync"
+                android:layout_marginBottom="20dp"
+                android:textSize="18dp"
+                android:layout_gravity="start"
+                android:padding="3dip" />
+            <TextView
+                android:textColor="#000000"
+                android:layout_marginBottom="20dp"
+                android:textSize="18dp"
+                android:text="0"
+                android:layout_column="1"
+                android:layout_gravity="right"
+                android:padding="3dip" />
+        </TableRow>
+
+        <TableRow>
+            <TextView
+                android:textColor="#000000"
+                android:text="4KB Read Count"
+                android:layout_marginBottom="20dp"
+                android:textSize="18dp"
+                android:layout_gravity="start"
+                android:padding="3dip" />
+            <TextView
+                android:textColor="#000000"
+                android:layout_marginBottom="20dp"
+                android:textSize="18dp"
+                android:text="0"
+                android:layout_column="1"
+                android:layout_gravity="right"
+                android:padding="3dip" />
+        </TableRow>
+
+        <TableRow>
+            <TextView
+                android:textColor="#000000"
+                android:text="Total Read Count"
+                android:layout_marginBottom="20dp"
+                android:textSize="18dp"
+                android:layout_gravity="start"
+                android:padding="3dip" />
+            <TextView
+                android:textColor="#000000"
+                android:layout_marginBottom="20dp"
+                android:textSize="18dp"
+                android:text="0"
+                android:layout_column="1"
+                android:layout_gravity="right"
+                android:padding="3dip" />
+        </TableRow>
+
+        <TableRow>
+            <TextView
+                android:textColor="#000000"
+                android:text="4KB Write Count"
+                android:layout_marginBottom="20dp"
+                android:textSize="18dp"
+                android:layout_gravity="start"
+                android:padding="3dip" />
+            <TextView
+                android:textColor="#000000"
+                android:text="0"
+                android:layout_marginBottom="20dp"
+                android:textSize="18dp"
+                android:layout_column="1"
+                android:layout_gravity="right"
+                android:padding="3dip" />
+        </TableRow>
+
+        <TableRow>
+            <TextView
+                android:textColor="#000000"
+                android:text="Total Write Count"
+                android:layout_marginBottom="20dp"
+                android:textSize="18dp"
+                android:layout_gravity="start"
+                android:padding="3dip" />
+            <TextView
+                android:textColor="#000000"
+                android:layout_marginBottom="20dp"
+                android:textSize="18dp"
+                android:text="0"
+                android:layout_column="1"
+                android:layout_gravity="right"
+                android:padding="3dip" />
+        </TableRow>
+
+        <TableRow>
+            <TextView
+                android:textColor="#000000"
+                android:text="4KB Write Sync Count"
+                android:layout_marginBottom="20dp"
+                android:textSize="18dp"
+                android:layout_gravity="start"
+                android:padding="3dip" />
+            <TextView
+                android:textColor="#000000"
+                android:text="0"
+                android:layout_marginBottom="20dp"
+                android:textSize="18dp"
+                android:layout_column="1"
+                android:layout_gravity="right"
+                android:padding="3dip" />
+        </TableRow>
+
+        <TableRow>
+            <TextView
+                android:textColor="#000000"
+                android:text="Total Write Sync Count"
+                android:layout_marginBottom="20dp"
+                android:textSize="18dp"
+                android:layout_gravity="start"
+                android:padding="3dip" />
+            <TextView
+                android:textColor="#000000"
+                android:layout_marginBottom="20dp"
+                android:textSize="18dp"
+                android:text="0"
+                android:layout_column="1"
+                android:layout_gravity="right"
+                android:padding="3dip" />
+        </TableRow>
+
+        <TableRow>
+            <TextView
+                android:textColor="#000000"
+                android:text="Total Read Data (KB)"
+                android:layout_marginBottom="20dp"
+                android:textSize="18dp"
+                android:layout_gravity="start"
+                android:padding="3dip" />
+            <TextView
+                android:textColor="#000000"
+                android:layout_marginBottom="20dp"
+                android:textSize="18dp"
+                android:text="0"
+                android:layout_column="1"
+                android:layout_gravity="right"
+                android:padding="3dip" />
+        </TableRow>
+
+        <TableRow>
+            <TextView
+                android:textColor="#000000"
+                android:text="Total Write Data (KB)"
+                android:layout_marginBottom="20dp"
+                android:textSize="18dp"
+                android:layout_gravity="start"
+                android:padding="3dip" />
+            <TextView
+                android:textColor="#000000"
+                android:text="0"
+                android:layout_column="1"
+                android:layout_marginBottom="20dp"
+                android:textSize="18dp"
+                android:layout_gravity="right"
+                android:padding="3dip" />
+        </TableRow>
+
+        <TableRow>
+            <TextView
+                android:textColor="#000000"
+                android:text="Total Write Sync Data (KB)"
+                android:layout_marginBottom="20dp"
+                android:textSize="18dp"
+                android:layout_gravity="start"
+                android:padding="3dip" />
+            <TextView
+                android:textColor="#000000"
+                android:text="0"
+                android:layout_marginBottom="20dp"
+                android:textSize="18dp"
+                android:layout_column="1"
+                android:layout_gravity="right"
+                android:padding="3dip" />
+        </TableRow>
+
+        <!--<View-->
+            <!--android:layout_height="2dip"-->
+            <!--android:background="#FF909090" />-->
+
+        <TextView
+            android:textColor="#000000"
+            android:id="@+id/text1"
+            android:textSize="25dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:scrollbars = "vertical" />
+
+    <!--<TableRow>-->
+        <!--<TextView-->
+            <!--android:text="Metadata"-->
+            <!--android:layout_gravity="start"-->
+            <!--android:padding="3dip" />-->
+        <!--<TextView-->
+            <!--android:text="Journal"-->
+            <!--android:layout_gravity="start"-->
+            <!--android:padding="3dip"/>-->
+        <!--<TextView-->
+            <!--android:text="Data"-->
+            <!--android:layout_gravity="right"-->
+            <!--android:padding="3dip"/>-->
+    <!--</TableRow>-->
+
+    <!--<TableRow>-->
+        <!--<TextView-->
+            <!--android:text="Val_1"-->
+            <!--android:layout_gravity="start"-->
+            <!--android:padding="3dip" />-->
+        <!--<TextView-->
+            <!--android:text="Val_2"-->
+            <!--android:layout_gravity="start"-->
+            <!--android:padding="3dip"/>-->
+        <!--<TextView-->
+            <!--android:text="Val_3"-->
+            <!--android:layout_gravity="right"-->
+            <!--android:padding="3dip"/>-->
+    <!--</TableRow>-->
+     <TableRow>
+         <Button
+             android:textColor="#000000"
+             android:layout_width="fill_parent"
+             android:layout_column="1"
+             android:layout_height="wrap_content" android:id="@+id/btn1"
+             android:text="Restart App" />
+     </TableRow>
+
+</TableLayout>
+</ScrollView>

@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ScrollView android:id="@+id/scrollView" xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:scrollbars="none"
+    android:layout_weight="1">
+
+<TableLayout android:id="@+id/mainLayout" xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:stretchColumns="1">
+
+    <TableRow>
+        <TextView
+            android:layout_width="0dip"
+            android:layout_weight="1"
+            android:textSize="25dp"
+            android:layout_marginBottom="20dp"
+            android:textColor="#000000"
+            android:text="APPLICATION NAME"/>
+    </TableRow>
+
+    <TableRow android:id="@+id/overall">
+        <TextView
+            android:textColor="#000000"
+            android:layout_column="1"
+            android:layout_marginBottom="20dp"
+            android:textSize="23dp"
+            android:text="Overall"
+            android:padding="3dip"/>
+    </TableRow>
+
+    <TableRow android:id="@+id/angrybirds">
+        <TextView
+            android:textColor="#000000"
+            android:layout_column="1"
+            android:layout_marginBottom="20dp"
+            android:textSize="23dp"
+            android:text="Angry Birds"
+            android:padding="3dip"/>
+    </TableRow>
+
+    <TableRow android:id="@+id/snowparty2lite">
+        <TextView
+            android:textColor="#000000"
+            android:layout_column="1"
+            android:layout_marginBottom="20dp"
+            android:textSize="23dp"
+            android:text="SnowBoard"
+            android:padding="3dip"/>
+    </TableRow>
+
+    <TableRow android:id="@+id/Weather">
+        <TextView
+            android:textColor="#000000"
+            android:layout_column="1"
+            android:layout_marginBottom="20dp"
+            android:textSize="23dp"
+            android:text="Weather"
+            android:padding="3dip"/>
+    </TableRow>
+
+    <TableRow android:id="@+id/IMDB">
+        <TextView
+            android:textColor="#000000"
+            android:layout_column="1"
+            android:layout_marginBottom="20dp"
+            android:textSize="23dp"
+            android:text="IMDB"
+            android:padding="3dip"/>
+    </TableRow>
+
+    <TableRow android:id="@+id/Audible">
+        <TextView
+            android:textColor="#000000"
+            android:layout_column="1"
+            android:layout_marginBottom="20dp"
+            android:textSize="23dp"
+            android:text="AudibleBooks"
+            android:padding="3dip"/>
+    </TableRow>
+
+    <TableRow android:id="@+id/flavyvr">
+        <TextView
+            android:textColor="#000000"
+            android:layout_column="1"
+            android:layout_marginBottom="20dp"
+            android:textSize="23dp"
+            android:text="Gallery"
+            android:padding="3dip"/>
+    </TableRow>
+
+    <TableRow android:id="@+id/Gm">
+        <TextView
+            android:textColor="#000000"
+            android:layout_column="1"
+            android:layout_marginBottom="20dp"
+            android:textSize="23dp"
+            android:text="Gmail"
+            android:padding="3dip"/>
+    </TableRow>
+
+    <TableRow android:id="@+id/Gbis">
+        <TextView
+            android:textColor="#000000"
+            android:layout_column="1"
+            android:layout_marginBottom="20dp"
+            android:textSize="23dp"
+            android:text="GasBuddy"
+            android:padding="3dip"/>
+    </TableRow>
+
+    <TableRow android:id="@+id/Twitter">
+        <TextView
+            android:textColor="#000000"
+            android:layout_column="1"
+            android:layout_marginBottom="20dp"
+            android:textSize="23dp"
+            android:text="Twitter"
+            android:padding="3dip"/>
+    </TableRow>
+
+    <TableRow android:id="@+id/YouTube">
+        <TextView
+            android:textColor="#000000"
+            android:layout_column="1"
+            android:layout_marginBottom="20dp"
+            android:textSize="23dp"
+            android:text="YouTube"
+            android:padding="3dip"/>
+    </TableRow>
+
+    <TableRow android:id="@+id/Spotify">
+        <TextView
+            android:textColor="#000000"
+            android:layout_column="1"
+            android:layout_marginBottom="20dp"
+            android:textSize="23dp"
+            android:text="Spotify"
+            android:padding="3dip"/>
+    </TableRow>
+
+    <TableRow android:id="@+id/Chrome">
+        <TextView
+            android:textColor="#000000"
+            android:layout_column="1"
+            android:layout_marginBottom="20dp"
+            android:textSize="23dp"
+            android:text="Chrome"
+            android:padding="3dip"/>
+    </TableRow>
+
+    <TableRow android:id="@+id/WhatsApp">
+        <TextView
+            android:textColor="#000000"
+            android:layout_column="1"
+            android:layout_marginBottom="20dp"
+            android:textSize="23dp"
+            android:text="WhatsApp"
+            android:padding="3dip"/>
+    </TableRow>
+
+    <TableRow android:id="@+id/Maps">
+        <TextView
+            android:textColor="#000000"
+            android:layout_column="1"
+            android:layout_marginBottom="20dp"
+            android:textSize="23dp"
+            android:text="Google Maps"
+            android:padding="3dip"/>
+    </TableRow>
+
+    <TableRow android:id="@+id/Airdroid">
+        <TextView
+            android:textColor="#000000"
+            android:layout_column="1"
+            android:layout_marginBottom="20dp"
+            android:textSize="23dp"
+            android:text="File Trans"
+            android:padding="3dip"/>
+    </TableRow>
+
+    <TableRow android:id="@+id/Facebook">
+        <TextView
+            android:textColor="#000000"
+            android:layout_column="1"
+            android:layout_marginBottom="20dp"
+            android:textSize="23dp"
+            android:text="Facebook Mssgr"
+            android:padding="3dip"/>
+    </TableRow>
+
+    <TableRow android:id="@+id/Camera">
+        <TextView
+            android:textColor="#000000"
+            android:layout_column="1"
+            android:layout_marginBottom="20dp"
+            android:textSize="23dp"
+            android:text="HD Camera"
+            android:padding="3dip"/>
+    </TableRow>
+
+    <TableRow android:id="@+id/Snapchat">
+        <TextView
+            android:textColor="#000000"
+            android:layout_column="1"
+            android:layout_marginBottom="20dp"
+            android:textSize="23dp"
+            android:text="Snapchat"
+            android:padding="3dip"/>
+    </TableRow>
+
+    <TableRow android:id="@+id/Instagram">
+        <TextView
+            android:textColor="#000000"
+            android:layout_column="1"
+            android:layout_marginBottom="20dp"
+            android:textSize="23dp"
+            android:text="Instagram"
+            android:padding="3dip"/>
+    </TableRow>
+
+    <TableRow android:id="@+id/Epicwaronline">
+        <TextView
+            android:textColor="#000000"
+            android:layout_column="1"
+            android:layout_marginBottom="20dp"
+            android:textSize="23dp"
+            android:text="Mobile Strike"
+            android:padding="3dip"/>
+    </TableRow>
+</TableLayout>
+</ScrollView>
