@@ -32,8 +32,6 @@ bool ioinsight_add_io(struct request *rq, bool is_issue)
 	struct uio_ws log_ws; 	
 
 	unsigned char log_size = 0;
-	struct timespec ts_now;		//date 
-	struct tm tm;			//time_to_tm(timeconv) 
 	struct bio *bio = NULL;		//the first bio of request 
 	char *bio_buf = NULL;		//check jouranl header 
 	struct address_space *mapping = NULL;   //flags for sync/fdatasync 
@@ -61,10 +59,6 @@ bool ioinsight_add_io(struct request *rq, bool is_issue)
 	memset(&log_ws, 0, sizeof(struct uio_ws));
 	memset(&pname, 0, PNAME_MAX);
 
-	getnstimeofday(&ts_now);
-	ts_now.tv_sec += 60 * 60 * 9;   //GMT +9hour(Korea); 
-	time_to_tm(ts_now.tv_sec, 0, &tm);
-
 	//header information (time) 
 	__fill_header(TRACE_IO, &header);
 
@@ -91,7 +85,7 @@ bool ioinsight_add_io(struct request *rq, bool is_issue)
 				log.major_dev = MAJOR(inode->i_sb->s_dev);
 				log.minor_dev = MINOR(inode->i_sb->s_dev);
 			} else {
-				//joruanl or meta block 
+				//journal or meta block 
 				if (!IS_ERR_OR_NULL(bio_buf)) {
 					//journal signature(magic number) 
 					if (*(bio_buf) == 0xc0 && *(bio_buf+1) == 0x3b &&
@@ -141,8 +135,8 @@ bool ioinsight_add_io(struct request *rq, bool is_issue)
 		log.block_len = (int)blk_rq_bytes(rq) / 512;		//one block is 512 bytes, so block_len is the number of blocks accessed
 		if (bio->bi_pid != 0) {
 			bio_task = find_task_by_vpid(bio->bi_pid);
-			log.pid = bio->bi_pid;
-			log.tgid = bio->bi_tgid;
+			log.pid = -1;//bio->bi_pid;
+			log.tgid = -1;//bio->bi_tgid;
 			log.ppid = -1;
 
 			if (!IS_ERR_OR_NULL(bio_task) &&
@@ -192,16 +186,16 @@ bool ioinsight_add_io(struct request *rq, bool is_issue)
 		else if (log.block_type == BLOCK_NONE)
 			str_bt = "N";
 
-		/*snprintf(str_log, sizeof(str_log), "\n+%d,%d,%d,%d,%d,%s,%s,%d,%d,%s,%s,%s,%s,%s,%d,%d!",
+		snprintf(str_log, sizeof(str_log), "\n+%d,%d,%d,%d,%d,%s,%s,%d,%d,%s,%s,%s,%s,%s,%d,%d!",
 		is_issue, header.hour, header.min, header.sec, header.nsec, 
 		pname, fname, log_ws.t_id, log_ws.fs_id, 
-		str_rwbs, str_bt, str_fsync_sqlite, str_fsync, str_fdatasync, log.sector_nb, log.block_len);*/
+		str_rwbs, str_bt, str_fsync_sqlite, str_fsync, str_fdatasync, log.sector_nb, log.block_len);
 
-		snprintf(str_log, sizeof(str_log), "\n+%d,%d,%d,%d,%d,%s,%s,%d,%d,%s,%s,%s,%s,%s,%d,%d,%d,%d!",
+		/*snprintf(str_log, sizeof(str_log), "\n+%d,%d,%d,%d,%d,%s,%s,%d,%d,%s,%s,%s,%s,%s,%d,%d,%d,%d!",
 		is_issue, header.hour, header.min, header.sec, header.nsec, 
 		pname, fname, log_ws.t_id, log_ws.fs_id, 
 		str_rwbs, str_bt, str_fsync_sqlite, str_fsync, str_fdatasync, log.sector_nb, log.block_len, log.pid, log.tgid);
-
+*/
 		printk(KERN_EMERG "\t%s\n", str_log);
 	}
 	return true;

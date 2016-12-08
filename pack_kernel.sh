@@ -1,6 +1,7 @@
 #!/bin/bash
-source /home/amar/cs211/run_this_android.sh
-cd /home/amar/cs211/ioinsight/hammerhead-marshmallow/
+
+source ./scripts/run_this_android.sh
+cd ./hammerhead-marshmallow/
 make hammerhead_defconfig && make -j4
 
 echo -n "
@@ -10,15 +11,15 @@ read answer
 if echo "$answer" | grep -iq "^y" ;then
     echo "Sure you genius :)
     "
-    cd /home/amar/cs211/bootimgkitchen/
+    cd ../bootimgkitchen/
 	./BootTools-Nex5.sh
-	cp /home/amar/cs211/ioinsight/hammerhead-marshmallow/arch/arm/boot/zImage-dtb ./zImage-dtb
+	cp ../hammerhead-marshmallow/arch/arm/boot/zImage-dtb ./zImage-dtb
 	./BootTools-Nex5.sh
 	adb reboot bootloader
 	sleep 1
 	fastboot flash boot ./*.img
 	fastboot reboot
 else
-    echo "Ok idiot :| Go solve the error :/
+    echo "Ok :| Go solve the error :/
     "
 fi
